@@ -29,4 +29,9 @@ postconf -e 'smtp_tls_CAfile = /etc/ssl/certs/ca-bundle.crt'
 
 postfix start; sudo postfix reload
 
-echo "test" |mailx -s test -r "<$sendFrom>" $sendTo
+sendmail $sendTo <<EOF
+subject:test
+from:$sendFrom
+
+Example Message
+EOF

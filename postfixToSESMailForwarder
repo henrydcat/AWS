@@ -7,6 +7,10 @@ SMTPPASSWORD=""
 sendFrom=""
 sendTo=""
 
+if [ -e ./vars.conf ] ; then
+	source ./vars.conf
+fi
+
 #Install postfix to forward mail to ses:
 yum install postfix cyrus-sasl-plain
 

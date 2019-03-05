@@ -12,7 +12,7 @@ if [ -e ./vars.conf ] ; then
 fi
 
 #Install postfix to forward mail to ses:
-yum install postfix cyrus-sasl-plain
+yum -y install postfix cyrus-sasl-plain
 
 # configure postfix:
 sudo postconf -e "relayhost = [email-smtp.us-west-2.amazonaws.com]:587" \

@@ -1,0 +1,32 @@
+
+#CentOS7
+# see this article before you run this script (https://docs.aws.amazon.com/ses/latest/DeveloperGuide/postfix.html)
+
+SMTPUSERNAME=""
+SMTPPASSWORD=""
+sendFrom=""
+sendTo=""
+
+#Install postfix to forward mail to ses:
+yum install postfix cyrus-sasl-plain
+
+# configure postfix:
+sudo postconf -e "relayhost = [email-smtp.us-west-2.amazonaws.com]:587" \
+"smtp_sasl_auth_enable = yes" \
+"smtp_sasl_security_options = noanonymous" \
+"smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd" \
+"smtp_use_tls = yes" \
+"smtp_tls_security_level = encrypt" \
+"smtp_tls_note_starttls_offer = yes"
+
+
+echo [email-smtp.us-west-2.amazonaws.com]:587 $SMTPUSERNAME:$SMTPPASSWORD >/etc/postfix/sasl_passwd
+postmap hash:/etc/postfix/sasl_passwd
+
+chown root:root /etc/postfix/sasl_passwd /etc/postfix/sasl_passwd.db
+chmod 0600 /etc/postfix/sasl_passwd /etc/postfix/sasl_passwd.db
+postconf -e 'smtp_tls_CAfile = /etc/ssl/certs/ca-bundle.crt'
+
+postfix start; sudo postfix reload
+
+echo "test" |mailx -s test -r "<$sendFrom>" $sendTo
